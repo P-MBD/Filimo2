@@ -3,10 +3,28 @@ import { ActivityIndicator, FlatList, Text, View, StyleSheet,TouchableOpacity,Im
 import {navigationContainer} from '@react-navigation/native';
 import Axios from 'axios';
 
-export default function CategoryScreen({navigation}) {
+export default function VideoCategoryScreen({navigation, route}) {
+  const { myParams } = route.params;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   useEffect(() => {
+
+    Axios.post('https://androidsupport.ir/pack/aparat/getVideosCategory.php', {
+      catId: myParams.catId,
+      lastName: 'Flintstone'
+    })
+    .then(function (response) {
+      console.log(response);
+      console.log("defaultApp -> data", response.data)
+      setData(response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .then(function(){
+       setLoading(false)
+    });
+
     Axios.get('https://androidsupport.ir/pack/aparat/getCategory.php')
       .then(({ data }) => {
         console.log("defaultApp -> data", data)
@@ -22,7 +40,7 @@ export default function CategoryScreen({navigation}) {
        
       {isLoading ? <ActivityIndicator /> : (
         <View>
-          <Text style={styles.titles}>Category List</Text>
+          <Text style={styles.titles}>Videos List in {myParams.title} </Text>
         <FlatList
           data={data}
           keyExtractor={(item, index) => {
